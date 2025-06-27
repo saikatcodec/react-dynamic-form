@@ -28,9 +28,18 @@ const UserForm = () => {
     setState(oldState);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log(state);
+  };
+
   return (
     <>
-      <form>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: "0.7rem" }}
+      >
         <InputField
           label={"First Name"}
           type={"text"}
