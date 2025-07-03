@@ -1,7 +1,11 @@
 import { useState } from "react";
 import Button from "../UI/Button";
 import InputField from "../UI/InputField";
-import { deepClone } from "../../utils/relateObject";
+import {
+  deepClone,
+  mapStateToValues,
+  mapValuesToState,
+} from "../../utils/relateObject";
 
 const init = {
   firstName: {
@@ -25,13 +29,52 @@ const UserForm = () => {
     const oldState = deepClone(state);
     oldState[e.target.name].value = e.target.value;
 
-    setState(oldState);
+    const { tmpState, hasError } = checkErrors(oldState);
+    setState(tmpState);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log(state);
+    const oldState = deepClone(state);
+
+    const { tmpState, hasError } = checkErrors(oldState);
+    setState(tmpState);
+
+    if (!hasError) {
+      console.log(state);
+    } else {
+      console.log("Error Occured!");
+    }
+  };
+
+  const checkErrors = (tmpState) => {
+    const values = mapStateToValues(tmpState, "value");
+    const { errors, hasError } = validate(values);
+
+    tmpState = mapValuesToState(tmpState, errors, "error");
+
+    return { tmpState, hasError };
+  };
+
+  const validate = (values) => {
+    const errors = {};
+    const keys = Object.keys(values);
+    let hasError = false;
+
+    keys.forEach((key) => {
+      if (values[key] === "") {
+        errors[key] = `${key} field is required`;
+        hasError = true;
+      } else {
+        errors[key] = "";
+      }
+    });
+
+    return {
+      errors,
+      hasError,
+    };
   };
 
   return (
@@ -45,6 +88,7 @@ const UserForm = () => {
           type={"text"}
           name={"firstName"}
           value={state.firstName.value}
+          error={state.firstName.error}
           onChange={handleChange}
         />
         <InputField
@@ -52,6 +96,7 @@ const UserForm = () => {
           type={"text"}
           name={"lastName"}
           value={state.lastName.value}
+          error={state.lastName.error}
           onChange={handleChange}
         />
         <InputField
@@ -59,6 +104,7 @@ const UserForm = () => {
           type={"password"}
           name={"password"}
           value={state.password.value}
+          error={state.password.error}
           onChange={handleChange}
         />
         <Button>Submit</Button>

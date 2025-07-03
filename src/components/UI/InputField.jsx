@@ -8,28 +8,36 @@ const Input = styled.input`
   padding: 0.3rem 0.6rem;
 `;
 
+const Error = styled.label`
+  font-size: 0.8rem;
+  color: #f00;
+`;
+
 const InputField = ({
   label,
   name,
   type,
   placeholder,
   value,
+  error,
   onChange,
   onBlur,
   onFocus,
 }) => {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-      <label>{label}</label>
+      <label htmlFor={name}>{label}</label>
       <Input
         name={name}
         type={type}
+        id={name}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         onBlur={onBlur}
         onFocus={onFocus}
       />
+      <Error> {error} </Error>
     </div>
   );
 };
@@ -40,6 +48,7 @@ InputField.propTypes = {
   type: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   value: PropTypes.string.isRequired,
+  error: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func,
   onFocus: PropTypes.func,
